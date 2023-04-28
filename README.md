@@ -1,6 +1,3 @@
-# Apartment-Managment-System
-
-
 This is the repository we will use to do practice exercises for the whole team.
 
 Current Exercise - GitHub Workflow on Names.md
