@@ -4,11 +4,13 @@ import { XCircle, Binoculars } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 
 export const SignUp = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [telegramUrl, setTelegramUrl] = useState("");
+  const [name, setname] = useState("");
+  const [fatherName, setFatherName] = useState("");
+  const [grandFatherName, setGrandFatherName] = useState("");
   const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
+  const [avatar, setAvatar] = useState("");
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -26,11 +28,18 @@ export const SignUp = () => {
 
     if (loading) return;
     setLoading(true);
-
-    register(firstName, lastName, telegramUrl, email, password)
+    const formData = new FormData();
+    formData.set("name", name);
+    formData.set("fatherName", fatherName);
+    formData.set("grandFatherName", grandFatherName);
+    formData.set("phoneNumber", phoneNumber);
+    formData.set("password", password);
+    formData.set("email", email);
+    formData.set("avatar", avatar[0]);
+    register(formData)
       .then((data) => {
-        console.log("User signed in successfully");
-        navigate("/sign-in");
+        console.log(data);
+        navigate("/pending");
       })
       .catch((error) => {
         const random = Math.random().toString(36).substring(7);
@@ -55,11 +64,11 @@ export const SignUp = () => {
         <div className="w-full flex flex-col h-screen mx-auto">
           <div className="h-full w-full overflow-scroll scroll-m-0">
             <div className="grid grid-cols-1 my-20 mx-auto pt-8 md:pt-0 px-8 md:px-24 lg:px-32 border bg-white mt-5 shadow-md-gray offset-x-1 offset-y-1">
-              <div className="flex">
+              <div className="flex mx-auto">
                 <p className="text-3xl font-bold text-neutral">
-                  Join ProjectFinder<span> </span>
+                  <span> create your account</span>
                 </p>
-                <Binoculars size={32} weight="bold" fill="text-neutral" />
+                {/* <Binoculars size={32} weight="bold" fill="text-neutral" /> */}
               </div>
               <p className="pt-1">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
@@ -68,9 +77,8 @@ export const SignUp = () => {
                   Login here.
                 </a>
               </p>
-
-              <form className="flex flex-col pt-3 gap-2">
-                <div className="form-control w-full">
+              <form className="flex flex-col pt-3 gap-1 mx-auto">
+                <div className="form-control w-full ">
                   <label className="label">
                     <span className="label-text">First Name</span>
                   </label>
@@ -78,13 +86,29 @@ export const SignUp = () => {
                     name="first-name"
                     type="text"
                     placeholder="John"
-                    className="input input-bordered w-full max-w-md"
-                    value={firstName}
+                    className="input input-bordered w-full max-w-md "
+                    value={name}
                     onChange={(e) => {
-                      setFirstName(e.target.value);
+                      setname(e.target.value);
                     }}
                   />
                 </div>
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text">middle Name</span>
+                  </label>
+                  <input
+                    name="middle-name"
+                    type="text"
+                    placeholder="Doe"
+                    className="input input-bordered w-full max-w-md"
+                    value={fatherName}
+                    onChange={(e) => {
+                      setFatherName(e.target.value);
+                    }}
+                  />
+                </div>
+
                 <div className="form-control w-full">
                   <label className="label">
                     <span className="label-text">Last Name</span>
@@ -94,9 +118,9 @@ export const SignUp = () => {
                     type="text"
                     placeholder="Doe"
                     className="input input-bordered w-full max-w-md"
-                    value={lastName}
+                    value={grandFatherName}
                     onChange={(e) => {
-                      setLastName(e.target.value);
+                      setGrandFatherName(e.target.value);
                     }}
                   />
                 </div>
@@ -117,15 +141,15 @@ export const SignUp = () => {
                 </div>
                 <div className="form-control w-full">
                   <label className="label">
-                    <span className="label-text">Telegram</span>
+                    <span className="label-text">Phone number</span>
                   </label>
                   <input
-                    name="telegram"
-                    type="url"
-                    placeholder="https://t.me/yourusername"
+                    name="phone number"
+                    type="tel"
+                    placeholder="mobile"
                     className="input input-bordered w-full max-w-md"
-                    value={telegramUrl}
-                    onChange={(e) => setTelegramUrl(e.target.value)}
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
                   />
                 </div>
                 <div className="form-control w-full">
@@ -136,14 +160,25 @@ export const SignUp = () => {
                     name="password"
                     type="password"
                     placeholder="Password"
-                    className="input input-bordered w-full max-w-xmds"
+                    className="input input-bordered w-full max-w-md"
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
                     }}
                   />
                 </div>
-
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text">profile picture</span>
+                  </label>
+                  <input
+                    name="profile picture"
+                    type="file"
+                    placeholder="profile picture"
+                    className="input input-bordered w-full max-w-md"
+                    onChange={(e) => setAvatar(e.target.files)}
+                  />
+                </div>
                 <button
                   className={
                     "btn btn-primary mt-16 btn-active" +
