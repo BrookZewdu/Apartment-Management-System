@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 import UserRoutes from './routes/userRoutes';
 import cookieParser from 'cookie-parser';
 import fileupload from 'express-fileupload';
+import cors from 'cors';
 dotenv.config();
 
 
@@ -22,6 +23,7 @@ cloudinary.v2.config({
 connectToDatabase();
 
 app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(fileupload());
