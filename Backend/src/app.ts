@@ -8,9 +8,6 @@ import fileupload from 'express-fileupload';
 import cors from 'cors';
 dotenv.config();
 
-
-
-
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -27,10 +24,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(fileupload());
-
 app.use('/api/users', UserRoutes);
-
-
 
 
 app.listen(port, () => {

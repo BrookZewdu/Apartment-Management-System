@@ -45,7 +45,6 @@ export const signup = async (
         console.log(`Temporary file deleted: ${filePath}`);
       }
     });
-  
     const newuse = {
       ...req.body,
       avatar: {
@@ -184,7 +183,8 @@ export const forgotPassword = async (
     await sendEmail({
       to: email,
       subject: "Password Reset Instructions",
-      text: `Please use the following link to reset your password: /reset-password/${resetToken}`,
+      text: `http://localhost:3000/reset-password/${resetToken}`,
+
     });
 
     res.status(200).json({ success: true, data: "Email sent" });
@@ -300,7 +300,6 @@ export const updateDetails = async (
     res.status(500).json({ success: false, data: (error as Error).message });
   }
 };
-
 
 
 

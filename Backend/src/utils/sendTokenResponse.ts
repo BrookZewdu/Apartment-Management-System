@@ -16,6 +16,7 @@ export const sendTokenResponse = (user: IUser, statusCode: number, res: Response
   // Set the secure flag in the cookie options if in a production environment
   
   const userJSON = userWithoutPassword(user);
+
   // Send the JWT token as a cookie in the response
   res
     .status(statusCode)
