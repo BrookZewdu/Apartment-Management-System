@@ -5,7 +5,7 @@ import { loggedInUserState } from "../../../recoil_state";
 
 const Navbar = () => {
   const signedInUser = useRecoilValue(loggedInUserState);
-
+  console.log(signedInUser, "iiiiiiiiiii")
   return (
     <nav className=" bg-gray-800">
       <div className="flex items-center justify-between px-6 py-4 mx-auto max-w-7xl">
@@ -15,7 +15,7 @@ const Navbar = () => {
           </Link>
         </div>
         <div className=" flex items-center">
-          {signedInUser ? (
+          {signedInUser != null ? (
             <div className="flex items-center gap-2">
               <div className="w-24">
                 <a className="bg-gray-400 py-2 px-5 rounded-md w-full">

@@ -2,7 +2,7 @@ import { atom } from "recoil";
 
 export const loggedInUserState = atom({
   key: "signedInUser", // unique ID (with respect to other atoms/selectors)
-  default: JSON.parse(localStorage.getItem("loggedInUser")), // default value (aka initial value)
+  default: null, // default value (aka initial value)
 });
 
 export const myApplicationsState = atom({

@@ -10,6 +10,9 @@ import { RecoilRoot } from "recoil";
 import PendingPage from "./pages/pendingPage/pending";
 import VerifyEmail from "./pages/verifyemail/verifyEmail";
 
+import ForgetPasswordPage from "./pages/ForgotPassWord/forgotPassWord";
+import ResetPasswordPage from "./pages/ResetPassword/resetPassWord";
+
 const isAuthenticated = () => {
   console.log("is logged in: ", localStorage.getItem("authToken") !== null);
   // return localStorage.getItem("authToken") !== null;
@@ -26,6 +29,9 @@ function App() {
           <Route path="/pending" element={<PendingPage />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/" element={<LandingPage />} />
+          
+          <Route path="/forget-password" element={<ForgetPasswordPage/>} />
+          <Route path="/reset-password/:resetToken" element={<ResetPasswordPage/>} />
 
           <Route
             path="/home"
