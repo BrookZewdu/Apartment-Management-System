@@ -7,15 +7,19 @@ import {
   Lightbulb,
 } from "phosphor-react";
 import React, { useEffect } from "react";
-import { useRecoilState } from "recoil";
-import { activeTabState } from "../../recoil_state";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { activeTabState, loggedInUserState } from "../../recoil_state";
 import Applications from "./TabPages/Application";
 import Home from "./TabPages/Home";
 import { Profile } from "./TabPages/Profile";
 import { useNavigate } from "react-router-dom";
+import TabItem from "./components/TabItem";
+import Footer from "../LandingPage/components/Footer";
+import Navbar from "../LandingPage/components/Navbar";
 
 const HomePage = () => {
   const [activeTab, setActiveTab] = useRecoilState(activeTabState);
+  const setSignedInUser = useSetRecoilState(loggedInUserState);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,28 +34,8 @@ const HomePage = () => {
     // remove authToken and loggedInUser from local storage
     localStorage.removeItem("authToken");
     localStorage.removeItem("loggedInUser");
+
     navigate("/");
-  };
-
-  const TabItem = ({ tabName, Icon }) => {
-    const isActive = activeTab === tabName;
-
-    return (
-      <button
-        className={`flex items-center justify-start w-full h-12 px-4 transition-colors duration-200 rounded-none focus:outline-none ${
-          isActive
-            ? "text-white bg-primary"
-            : "text-gray-500 hover:text-white hover:bg-secondary"
-        }`}
-        onClick={() => handleTabClick(tabName)}
-      >
-        <Icon
-          size={isActive ? 28 : 24}
-          weight={isActive ? "bold" : "regular"}
-        />
-        <span className="ml-4 text-sm font-medium">{tabName}</span>
-      </button>
-    );
   };
 
   return (
@@ -88,11 +72,11 @@ const HomePage = () => {
           <span className="ml-4 text-sm font-medium">Sign Out</span>
         </button>
       </div>
-      <main className="fixed top-0 bottom-0 right-0 overflow-auto left-60 mt-20">
+      <div className="ml-60 w-full overflow-auto">
         {activeTab === "Home" && <Home />}
         {activeTab === "Profile" && <Profile />}
         {activeTab === "Applications" && <Applications />}
-      </main>
+      </div>
     </div>
   );
 };
