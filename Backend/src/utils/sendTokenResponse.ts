@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import { IUser } from '../models/User';
+import { userWithoutPassword } from '../models_methods/user_methods';
 
 // Create the sendTokenResponse function
 export const sendTokenResponse = (user: IUser, statusCode: number, res: Response) => {
@@ -14,6 +15,7 @@ export const sendTokenResponse = (user: IUser, statusCode: number, res: Response
 
   // Set the secure flag in the cookie options if in a production environment
   
+  const userJSON = userWithoutPassword(user);
 
   // Send the JWT token as a cookie in the response
   res
@@ -22,6 +24,6 @@ export const sendTokenResponse = (user: IUser, statusCode: number, res: Response
     .json({
       success: true,
       token,
-      user,
+      data: userJSON,
     });
 };

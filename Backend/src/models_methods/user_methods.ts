@@ -28,4 +28,13 @@ export function generateEmailVerificationToken(this: IUser): string {
     this.emailVerificationTokenExpires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
     return token;
   };
+export function userWithoutPassword(user: IUser): Partial<IUser> {
+  const userJSON = user.toJSON();
+  delete userJSON.password;
+  delete userJSON.emailVerificationToken
+  delete userJSON.emailVerificationTokenExpires
+
+  return userJSON;
+}
+
   

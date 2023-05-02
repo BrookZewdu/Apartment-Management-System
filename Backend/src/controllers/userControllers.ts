@@ -7,6 +7,12 @@ import cloudinary from "cloudinary";
 import * as path from "path";
 import { UploadedFile } from "express-fileupload";
 import fs from "fs";
+import { RequestWithUser } from "../authentication/auth";
+import Apartment, { IApartment } from '../models/apartment';
+import ApartmentRequest,{IApartmentRequest} from '../models/registerRequest';
+import { constrainedMemory } from "process";
+
+
 
 // Signup controller
 export const signup = async (
@@ -15,11 +21,9 @@ export const signup = async (
   next: NextFunction
 ) => {
   try {
-    console.log(req.body);
     if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).send("No files were uploaded.");
     }
-    console.log(req.files);
     const { email } = req.body;
 
     const avatar = (req.files as { [fieldname: string]: UploadedFile }).avatar;
@@ -41,7 +45,6 @@ export const signup = async (
         console.log(`Temporary file deleted: ${filePath}`);
       }
     });
-
     const newuse = {
       ...req.body,
       avatar: {
@@ -181,6 +184,7 @@ export const forgotPassword = async (
       to: email,
       subject: "Password Reset Instructions",
       text: `http://localhost:3000/reset-password/${resetToken}`,
+
     });
 
     res.status(200).json({ success: true, data: "Email sent" });
@@ -228,6 +232,77 @@ export const resetPassword = async (
   }
 };
 
+//update password controller
+export const updatePassword = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = (await User.findById(req.user?.id)) as IUser;
+    
+    if (!user) {
+      return res.status(400).json({ success: false, data: "Invalid token" });
+    }
+    
+    const isPasswordValid = await user.comparePassword(req.body.currentPassword);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ success: false, data: "Invalid password" });
+    }
+
+    user.password = req.body.newPassword;
+    await user.save();
+    sendTokenResponse(user, 200, res);
+  } catch (error) {
+    res.status(500).json({ success: false, data: (error as Error).message });
+  }
+};
+
+// update user details for avatar phone controller
+export const updateDetails = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = (await User.findById(req.user?.id)) as IUser;
+
+    if (!user) {
+      return res.status(400).json({ success: false, data: "Invalid token" });
+    }
+    //distroy old avatar if exist and save new one in cloudinary
+    if (req.files) {
+      await cloudinary.v2.uploader.destroy(user.avatar.public_id);
+    }
+    const avatar = (req.files as {[fieldname:string]: UploadedFile}).avatar;
+    const filePath = path.join("uploads", avatar?.name);
+    const result = await cloudinary.v2.uploader.upload(filePath,{
+      folder: "User",
+      width: 150,
+      height: 150,
+    });
+
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
+
+    user.avatar = {
+      public_id: result.public_id,
+      url: result.secure_url,
+    };
+    user.phoneNumber = req.body.phone;
+    await user.save();
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, data: (error as Error).message });
+  }
+};
+
+
+
 // get all users
 export const getAllUsers = async (
   req: Request,
@@ -241,3 +316,114 @@ export const getAllUsers = async (
     res.status(400).json({ success: false, data: (error as Error).message });
   }
 };
+
+// get single user
+export const getSingleUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findById(req.params.id) as IUser;
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+}
+
+// delete user
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id) as IUser;
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+}
+
+// make user a manager
+export const makeManager = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+
+    const user = await User.findById(req.params.id) as IUser;
+    user.role = "manager";
+    await user.save();
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+}
+
+// make user a security guard
+export const makeSecurityGuard = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+
+    const user = await User.findById(req.params.id) as IUser;
+    user.role = "security guard";
+    await user.save();
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+}
+
+
+
+
+// make a apartment register request
+export const makeApartmentRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findById(req.params.id) as IUser;
+    const apartment = await Apartment.findById(req.body.apartment) as IApartment;
+    const registerRequest = {
+      apartment: apartment._id,
+      user: user._id,
+      meetingDate: req.body.meetingDate,
+    };
+    const request = await ApartmentRequest.create(registerRequest) as IApartmentRequest;
+    await request.save();
+    res.status(200).json({ success: true, data: request });
+  } catch (error) {
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+}
+
+// accept a apartment register request and make user a tenant
+export const acceptApartmentRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try{
+    const apartmentRequest = await ApartmentRequest.findById(req.params.id) as IApartmentRequest;
+    const user = await User.findById(apartmentRequest.user) as IUser;
+    const apartment = await Apartment.findById(apartmentRequest.apartment) as IApartment;
+    user.isTenant = true;
+    await user.save();
+    apartment.available = false;
+    await apartment.save();
+    apartmentRequest.status = "accepted";
+    await apartmentRequest.save();
+    res.status(200).json({ success: true, data: apartmentRequest });
+  }
+  catch(error){
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+}
+
