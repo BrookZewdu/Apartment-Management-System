@@ -35,9 +35,9 @@ export const SignIn = () => {
     login(email, password)
       .then((data) => {
         console.log("User logged in successfully");
-        setSignedInUser(data.user);
+        setSignedInUser(data.data);
         localStorage.setItem("authToken", data.token);
-        localStorage.setItem("loggedInUser", JSON.stringify(data.user));
+        localStorage.setItem("loggedInUser", JSON.stringify(data.data));
         navigate("/home");
       })
       .catch((error) => {

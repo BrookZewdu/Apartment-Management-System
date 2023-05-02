@@ -34,6 +34,7 @@ const HomePage = () => {
     // remove authToken and loggedInUser from local storage
     localStorage.removeItem("authToken");
     localStorage.removeItem("loggedInUser");
+    setSignedInUser(undefined)
 
     navigate("/");
   };
