@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loggedInUserState } from "../../../recoil_state";
+import { Warehouse } from "@phosphor-icons/react";
 
 const Navbar = () => {
   const signedInUser = useRecoilValue(loggedInUserState);
@@ -10,8 +11,11 @@ const Navbar = () => {
     <nav className=" bg-gray-800">
       <div className="flex items-center justify-between px-6 py-4 mx-auto max-w-7xl">
         <div className="flex items-center">
-          <Link to="/" className="text-xl font-bold text-white">
-            Logo
+          <Link to="/" className="text-xl font-bold text-white flex">
+            <Warehouse size={34}/>
+            <div>
+              <h1>__APARMENT</h1>
+            </div>
           </Link>
         </div>
         <div className=" flex items-center">
