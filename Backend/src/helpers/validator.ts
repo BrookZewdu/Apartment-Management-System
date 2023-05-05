@@ -29,7 +29,7 @@ export default function validateSignupRequest(body : any) {
     });
     const result = schema.validate(body);
 
-    if ( result.error ) {
+    if ( !result.error ) {
         const complexityOptions = {
             min: 6,
             max: 30,
@@ -40,7 +40,7 @@ export default function validateSignupRequest(body : any) {
             requirementCount: 2,
         } 
         const complexityResult = passwordComplexity(complexityOptions, "Password").validate(body.password);
-
+        console.log(complexityResult);
         if (complexityResult.error) return complexityResult;
     }
 

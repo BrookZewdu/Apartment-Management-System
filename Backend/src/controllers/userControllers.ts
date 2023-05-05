@@ -29,6 +29,11 @@ export const signup = async (
 
     const { email } = req.body;
 
+    const userAlreadyExists = await User.findOne({ email });
+    if (userAlreadyExists) { return res.status(400).json(
+      { success: false, message: "User already exists" }); 
+    }
+
     const avatar = (req.files as { [fieldname: string]: UploadedFile }).avatar;
     //upload image to local storage temporarily
     const filePath = path.join("uploads", avatar.name);
