@@ -5,6 +5,7 @@ import { loggedInUserState } from "../../../recoil_state";
 import Footer from "../../LandingPage/components/Footer";
 import Navbar from "../../LandingPage/components/Navbar";
 
+
 export const Profile = () => {
   const [profile, setProfile] = useState({
     name: "",
@@ -12,11 +13,12 @@ export const Profile = () => {
     email: "",
     phoneNumber: "",
     grandFatherName: "",
-
     avatar: "",
   });
   const [loggedInUser, setLoggedInUser] = useRecoilState(loggedInUserState);
   const [isLoading, setIsLoading] = useState(false);
+  const [avatar, setAvatar] = useState("");
+  
 
   useEffect(() => {}, []);
 
@@ -86,7 +88,8 @@ export const Profile = () => {
                     name="first-name"
                     id="first-name"
                     autoComplete="given-name"
-                    className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                    readOnly
+                    className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 bg-gray-100 cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -109,7 +112,8 @@ export const Profile = () => {
                     name="middle-name"
                     id="middle-name"
                     autoComplete="middle-name"
-                    className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                    readOnly
+                    className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 bg-gray-100 cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -134,7 +138,8 @@ export const Profile = () => {
                     name="last-name"
                     id="last-name"
                     autoComplete="family-name"
-                    className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+                    readOnly
+                    className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 bg-gray-100 cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -148,42 +153,54 @@ export const Profile = () => {
                 </label>
                 <div className="mt-2">
                   <input
-                    placeholder="yourname@email.com"
-                    value={profile.email}
-                    onChange={(e) =>
-                      setProfile({ ...profile, email: e.target.value })
-                    }
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
-                  />
-                </div>
+                      placeholder="yourname@email.com"
+                      value={profile.email}
+                      id="email"
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      readOnly
+                      className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 bg-gray-100 cursor-not-allowed"
+                      />
+                  </div>
               </div>
 
               <div className="sm:col-span-3">
                 <label
-                  htmlFor="first-name"
+                  htmlFor="phone"
                   className="block text-sm font-medium leading-6 text-neutral-900"
                 >
                   Phone
                 </label>
                 <div className="mt-2">
                   <input
+                  id="phone"
                     placeholder="+251980555555"
                     value={profile.phoneNumber}
                     onChange={(e) => {
                       setProfile({ ...profile, phoneNumber: e.target.value });
                     }}
                     type="tel"
-                    name="first-name"
-                    id="first-name"
-                    autoComplete="given-name"
+                    name="phone"
+                    autoComplete="phone"
                     className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
+              <div className="sm:col-span-3">
+                  <label className="block text-sm font-medium leading-6 text-neutral-900">
+                    <span className="label-text">profile picture</span>
+                  </label>
+                  <div className="mt-2">
+                     <input
+                    name="profile picture"
+                    type="file"
+                    placeholder="profile picture"
+                    className="input input-bordered w-64 h-8"
+                    onChange={(e) => setAvatar(e.target.files)}
+                  />
+                  </div>
+                </div>
 
               {/* <div className="sm:col-span-3">
               <label

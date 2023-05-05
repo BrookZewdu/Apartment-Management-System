@@ -5,6 +5,8 @@ import {
   SignOut,
   User,
   Lightbulb,
+  Wrench,
+  Users,
 } from "phosphor-react";
 import React, { useEffect, useState } from "react";
 import { useRecoilValue, useRecoilState, useSetRecoilState } from "recoil";
@@ -25,6 +27,8 @@ import { useNavigate } from "react-router-dom";
 import TabItem from "./components/TabItem";
 import Footer from "../LandingPage/components/Footer";
 import Navbar from "../LandingPage/components/Navbar";
+import MaintenanceRequest from "./TabPages/MaintenanceRequest";
+import AddVisitors from "./TabPages/AddVisitors";
 
 
 const HomePage = () => {
@@ -64,8 +68,8 @@ const HomePage = () => {
     <div className="flex h-screen bg-gray-100">
       <div className="fixed top-0 left-0 flex flex-col h-screen py-4 bg-white border-r border-gray-200 w-60">
         <div className="px-4">
-          
-          <h1 className="text-lg font-bold">EMU Apartment</h1>
+
+          <h1 className="text-lg font-bold">Apartment Project</h1>
         </div>
         <nav className="flex-1 mt-8 space-y-2">
           <TabItem
@@ -143,6 +147,18 @@ const HomePage = () => {
             </>
           )}
           <TabItem
+            tabName="MaintenanceRequest"
+            Icon={Wrench}
+            onClick={handleTabClick}
+            isActive={activeTab === "MaintenanceRequest"}
+          />
+          <TabItem
+            tabName="AddVisitors"
+            Icon={Users}
+            onClick={handleTabClick}
+            isActive={activeTab === "AddVisitors"}
+          />
+          <TabItem
             tabName="Profile"
             Icon={User}
             onClick={handleTabClick}
@@ -177,6 +193,10 @@ const HomePage = () => {
             {activeSubTab["AddApartment"] && <Manager />}
           </>
         )} */}
+
+        {activeTab === "MaintenanceRequest" && <MaintenanceRequest />}
+        {activeTab === "AddVisitors" && <AddVisitors />}
+
       </div>
     </div>
   );
