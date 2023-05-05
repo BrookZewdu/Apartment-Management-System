@@ -11,8 +11,7 @@ import { RequestWithUser } from "../authentication/auth";
 import Apartment, { IApartment } from '../models/apartment';
 import ApartmentRequest,{IApartmentRequest} from '../models/registerRequest';
 import { constrainedMemory } from "process";
-
-
+import validateSignupRequest from "../helpers/validator";
 
 // Signup controller
 export const signup = async (
@@ -21,9 +20,13 @@ export const signup = async (
   next: NextFunction
 ) => {
   try {
+    const { error } = validateSignupRequest(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+    
     if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).send("No files were uploaded.");
     }
+
     const { email } = req.body;
 
     const avatar = (req.files as { [fieldname: string]: UploadedFile }).avatar;
@@ -45,6 +48,8 @@ export const signup = async (
         console.log(`Temporary file deleted: ${filePath}`);
       }
     });
+
+
     const newuse = {
       ...req.body,
       avatar: {
