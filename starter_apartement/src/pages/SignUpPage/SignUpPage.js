@@ -59,8 +59,8 @@ export const SignUp = () => {
   };
 
   return (
-    <div className="w-screen h-screen ">
-      <div className="grid  gap-4 w-screen h-screen mx-auto">
+    <div className="w-screen h-screen mx-auto">
+      <div className="grid  gap-4 w-full h-full">
         <div className="w-full flex flex-col h-screen mx-auto">
           <div className="h-full w-full overflow-scroll scroll-m-0">
             <div className="grid grid-cols-1 my-20 mx-auto pt-8 md:pt-0 px-8 md:px-24 lg:px-32 border bg-white mt-5 shadow-md-gray offset-x-1 offset-y-1">
