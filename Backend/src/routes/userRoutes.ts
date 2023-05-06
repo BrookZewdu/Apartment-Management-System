@@ -1,7 +1,7 @@
 // all user routes
 import express from 'express';
 import { signup, completeSignup,login,logout, forgotPassword,resetPassword,getAllUsers,
-    updateDetails,updatePassword,getSingleUser,deleteUser,makeApartmentRequest
+    updateDetails,updatePassword,getSingleUser,deleteUser,makeApartmentRequest, getApplications, applyForApartment
  } from '../controllers/userControllers';
 
 
@@ -17,7 +17,8 @@ router.route('/resetpassword/:resetToken').put(resetPassword);
 router.route('/').get(getAllUsers);
 router.route('/updatedetails').put(updateDetails);
 router.route('/updatepassword').put(updatePassword);
-
+router.route('/applications').get(getApplications);
+router.route('/apply/:apartment_id').post(applyForApartment);
 
 export default router;
 

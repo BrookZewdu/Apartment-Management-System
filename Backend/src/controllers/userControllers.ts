@@ -12,6 +12,7 @@ import Apartment, { IApartment } from '../models/apartment';
 import ApartmentRequest,{IApartmentRequest} from '../models/registerRequest';
 import { constrainedMemory } from "process";
 import validateSignupRequest from "../helpers/validator";
+import Applications, { IApplication } from "../models/applications";
 
 // Signup controller
 export const signup = async (
@@ -200,6 +201,7 @@ export const forgotPassword = async (
     });
 
     res.status(200).json({ success: true, data: "Email sent" });
+
   } catch (error) {
     console.log(error);
     user.resetPasswordToken = undefined;
@@ -243,6 +245,7 @@ export const resetPassword = async (
     res.status(500).json({ success: false, data: (error as Error).message });
   }
 };
+
 
 //update password controller
 export const updatePassword = async (
@@ -438,4 +441,45 @@ export const acceptApartmentRequest = async (
     res.status(400).json({ success: false, data: (error as Error).message });
   }
 }
+
+export const getApplications = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+
+    if (!req.user) return res.status(401).json({ success: false, data: "Unauthorized" });
+
+    const applications = (await Applications.find({userId: req.user?.id})
+            .populate('apartmentId')
+            .populate('userId'))  as IApplication[];
+
+    return res.status(200).json({ success: true, data: applications });
+  } catch (error) {
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+}
+
+export const applyForApartment = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+      
+      if (!req.user) return res.status(401).json({ success: false, data: "Unauthorized" });
+  
+      const application = (await Applications.create({
+        userId: req.user?.id,
+        apartmentId: req.params.apartmentId,
+        status: "pending",
+      })) as IApplication;
+  
+      return res.status(200).json({ success: true, data: application });
+
+  } catch (error) {
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+};
 
