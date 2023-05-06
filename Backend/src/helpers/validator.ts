@@ -20,7 +20,6 @@ export default function validateSignupRequest(body : any) {
             .max(13)
             .required(),
         password: Joi.string()
-            .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
             .required(),
         email: Joi.string()
             .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
@@ -37,10 +36,10 @@ export default function validateSignupRequest(body : any) {
             upperCase: 1,
             numeric: 1,
             symbol: 1,
-            requirementCount: 2,
+            requirementCount: 6,
         } 
+
         const complexityResult = passwordComplexity(complexityOptions, "Password").validate(body.password);
-        console.log(complexityResult);
         if (complexityResult.error) return complexityResult;
     }
 

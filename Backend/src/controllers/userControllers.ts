@@ -55,21 +55,21 @@ export const signup = async (
     });
 
 
-    const newuse = {
+    const newUser = {
       ...req.body,
       avatar: {
         public_id: myCloud.public_id,
         url: myCloud.url,
       },
     };
-    const user: IUser = new User(newuse);
+    const user: IUser = new User(newUser);
     const emailVerificationToken = user.generateEmailVerificationToken();
 
     try {
       await sendEmail({
         to: email,
         subject: "Email Verification Instructions",
-        text: `Please use the following link to verify your email: /verify-email/${emailVerificationToken}`,
+        text: `Please use the following link to verify your email: http://localhost:3000/api/users/verify-email/${emailVerificationToken}`,
       });
 
       await user.save();
@@ -146,12 +146,14 @@ export const login = async (
 
     const isPasswordValid = await user.comparePassword(password);
 
-    if (!isPasswordValid) {
-      res.status(401).json({ message: "Invalid credentials password" });
-      return;
-    }
+    if (!isPasswordValid) return res.status(401).json({ message: "Invalid credentials" });
+
+    if (!user.isVerified) return res.status(401).json({
+      message: "Your account has not been verified. Please check your email."
+    });
 
     sendTokenResponse(user, 200, res);
+
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
