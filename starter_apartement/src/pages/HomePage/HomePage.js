@@ -16,7 +16,8 @@ import {
   loggedInUserState,
 } from "../../recoil_state";
 
-import Applications from "./TabPages/Application";
+// import Applications from "./TabPages/Application.js";
+import Applications from "./TabPages/applications_v2.js";
 import AllApartmentss from "./TabPages/AllApartments";
 import Tenants from "./TabPages/Tenants";
 import RentedApartments from "./TabPages/RentedApartments";
@@ -29,6 +30,7 @@ import Footer from "../LandingPage/components/Footer";
 import Navbar from "../LandingPage/components/Navbar";
 import MaintenanceRequest from "./TabPages/MaintenanceRequest";
 import AddVisitors from "./TabPages/AddVisitors";
+import Payments from "./TabPages/payment";
 
 
 const HomePage = () => {
@@ -40,7 +42,7 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "Sign In";
+    document.title = "Home";
   }, []);
 
   const handleTabClick = (tabName) => {
@@ -146,6 +148,13 @@ const HomePage = () => {
               </TabItem> */}
             </>
           )}
+
+          <TabItem
+            tabName="Payment"
+            Icon={Wrench}
+            onClick={handleTabClick}
+            isActive={activeTab === "Payment"}
+          />
           <TabItem
             tabName="MaintenanceRequest"
             Icon={Wrench}
@@ -177,6 +186,7 @@ const HomePage = () => {
         {activeTab === "Home" && <Home />}
         {activeTab === "Profile" && <Profile />}
         {activeTab === "Applications" && <Applications />}
+        {activeTab === "Payment" && <Payments />}
         {activeTab === "AllApartments" && <AllApartmentss />}
         {activeTab === "RentedApartments" && <RentedApartments />}
         {activeTab === "Tenants" && <Tenants />}

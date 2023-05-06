@@ -315,7 +315,7 @@ export const Profile = () => {
           </button>
         </div>
       </form>
-          <Footer />
+          {/* <Footer /> */}
 
     </>
   );
