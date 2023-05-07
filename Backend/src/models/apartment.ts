@@ -15,6 +15,8 @@ export interface IApartment extends Document {
   reviews: IReview["_id"][];
   available: boolean;
   occupants: IUser["_id"] | null;
+  apartmentFloor: number;
+  apartmentNumber: number;
 }
 
 const ApartmentSchema: Schema = new Schema({
@@ -65,6 +67,14 @@ const ApartmentSchema: Schema = new Schema({
       default: null,
     },
   ],
+  apartmentFloor: {
+    type: Number,
+    required: true,
+  },
+  apartmentNumber: {
+    type: Number,
+    required: true,
+  }
 });
 
 const Apartment = model<IApartment>("Apartment", ApartmentSchema);

@@ -4,8 +4,19 @@ import { Request, Response, NextFunction } from 'express';
 // Get all apartments
 export const getApartments = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const apartments:IApartment[] = await Apartment.find();
-    res.status(200).json({ success: true, data: apartments });
+    // should be paginated, and filter by availabilty 
+
+    const limit : number = parseInt(req.query.limit as string) || 10;
+    const skip : number = parseInt(req.query.skip as string) || 1;
+
+    const availAprts: IApartment[] = await Apartment.find({available : true});
+
+    const apartments:IApartment[] = await Apartment.find( {available : true })
+      .skip((skip - 1) * limit)
+      .limit(limit);
+    
+    
+    res.status(200).json({ success: true, data: apartments, total: availAprts.length });
   } catch (error) {
     res.status(400).json({ success: false, data: (error as Error).message });
   }
