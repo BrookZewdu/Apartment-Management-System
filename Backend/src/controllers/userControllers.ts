@@ -11,9 +11,8 @@ import { RequestWithUser } from "../authentication/auth";
 import Apartment, { IApartment } from '../models/apartment';
 import ApartmentRequest,{IApartmentRequest} from '../models/registerRequest';
 import { constrainedMemory } from "process";
-import Visitor,{ IVisitor } from "../models/addVisitor";
-
-
+import validateSignupRequest from "../helpers/validator";
+import Applications, { IApplication } from "../models/applications";
 
 // Signup controller
 export const signup = async (
@@ -22,14 +21,18 @@ export const signup = async (
   next: NextFunction
 ) => {
   try {
-    const {email} = req.body;
-    const checkuser  = await User.find ({email:email});
-    console.log(checkuser);
-    if(checkuser.length>0) {
-      return res.status(400).json({ message: "Email already exists" });
-    }
+    const { error } = validateSignupRequest(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+    
     if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).send("No files were uploaded.");
+    }
+
+    const { email } = req.body;
+
+    const userAlreadyExists = await User.findOne({ email });
+    if (userAlreadyExists) { return res.status(400).json(
+      { success: false, message: "User already exists" }); 
     }
 
     const avatar = (req.files as { [fieldname: string]: UploadedFile }).avatar;
@@ -51,21 +54,23 @@ export const signup = async (
         console.log(`Temporary file deleted: ${filePath}`);
       }
     });
-    const newuse = {
+
+
+    const newUser = {
       ...req.body,
       avatar: {
         public_id: myCloud.public_id,
         url: myCloud.url,
       },
     };
-    const user: IUser = new User(newuse);
+    const user: IUser = new User(newUser);
     const emailVerificationToken = user.generateEmailVerificationToken();
 
     try {
       await sendEmail({
         to: email,
         subject: "Email Verification Instructions",
-        text: `Please use the following link to verify your email: http://localhost:3000/verify-email/${emailVerificationToken}`,
+        text: `Please use the following link to verify your email: http://localhost:3000/api/users/verify-email/${emailVerificationToken}`,
       });
 
       await user.save();
@@ -142,12 +147,14 @@ export const login = async (
 
     const isPasswordValid = await user.comparePassword(password);
 
-    if (!isPasswordValid) {
-      res.status(401).json({ message: "Invalid credentials password" });
-      return;
-    }
+    if (!isPasswordValid) return res.status(401).json({ message: "Invalid credentials" });
+
+    if (!user.isVerified) return res.status(401).json({
+      message: "Your account has not been verified. Please check your email."
+    });
 
     sendTokenResponse(user, 200, res);
+
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -194,6 +201,7 @@ export const forgotPassword = async (
     });
 
     res.status(200).json({ success: true, data: "Email sent" });
+
   } catch (error) {
     console.log(error);
     user.resetPasswordToken = undefined;
@@ -237,6 +245,7 @@ export const resetPassword = async (
     res.status(500).json({ success: false, data: (error as Error).message });
   }
 };
+
 
 //update password controller
 export const updatePassword = async (
@@ -307,73 +316,170 @@ export const updateDetails = async (
   }
 };
 
-// make a apartment register request
-export const makeApartmentRequest = async (
-  req: RequestWithUser,
+
+
+// get all users
+export const getAllUsers = async (
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const apartment = await Apartment.findById(req.body.id) as IApartment;
-    const user = await User.findById(req.user?._id) as IUser;
-    if(!apartment) return res.status(404).json({ success: false, data: "Apartment not found" });
-    const registerRequest = {
-      apartment: apartment._id,
-      user: req.user?._id,
-      meetingDate: req.body.date,
-    };
-    const request = await ApartmentRequest.create(registerRequest) as IApartmentRequest;
-    await request.save();
-    const data = {
-      name:user.name+" "+user.fatherName +" "+user.grandFatherName,
-      email:user.email,
-      phone:user.phoneNumber,
-      date:req.body.date,
-      id:apartment._id,
-      status:request.status
-    }
-    res.status(200).json({ success: true, data: data });
+    const users: IUser[] = await User.find();
+    res.status(200).json({ success: true, data: users });
+  } catch (error) {
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+};
+
+// get single user
+export const getSingleUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findById(req.params.id) as IUser;
+    res.status(200).json({ success: true, data: user });
   } catch (error) {
     res.status(400).json({ success: false, data: (error as Error).message });
   }
 }
 
-// cancel a apartment register request
-export const cancelApartmentRequest = async (
-  req: RequestWithUser,
+// delete user
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id) as IUser;
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+}
+
+// make user a manager
+export const makeManager = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+
+    const user = await User.findById(req.params.id) as IUser;
+    user.role = "manager";
+    await user.save();
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+}
+
+// make user a security guard
+export const makeSecurityGuard = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+
+    const user = await User.findById(req.params.id) as IUser;
+    user.role = "security guard";
+    await user.save();
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+}
+
+
+
+
+// make a apartment register request
+export const makeApartmentRequest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findById(req.params.id) as IUser;
+    const apartment = await Apartment.findById(req.body.apartment) as IApartment;
+    const registerRequest = {
+      apartment: apartment._id,
+      user: user._id,
+      meetingDate: req.body.meetingDate,
+    };
+    const request = await ApartmentRequest.create(registerRequest) as IApartmentRequest;
+    await request.save();
+    res.status(200).json({ success: true, data: request });
+  } catch (error) {
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+}
+
+// accept a apartment register request and make user a tenant
+export const acceptApartmentRequest = async (
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try{
-    const request = await ApartmentRequest.findById(req.params.id) as IApartmentRequest;
-    if(!request) return res.status(404).json({ success: false, data: "Request not found" });
-    await request.remove();
-    res.status(200).json({ success: true, data: "Request canceled successfully" });
+    const apartmentRequest = await ApartmentRequest.findById(req.params.id) as IApartmentRequest;
+    const user = await User.findById(apartmentRequest.user) as IUser;
+    const apartment = await Apartment.findById(apartmentRequest.apartment) as IApartment;
+    user.isTenant = true;
+    await user.save();
+    apartment.available = false;
+    await apartment.save();
+    apartmentRequest.status = "accepted";
+    await apartmentRequest.save();
+    res.status(200).json({ success: true, data: apartmentRequest });
   }
   catch(error){
     res.status(400).json({ success: false, data: (error as Error).message });
   }
 }
 
-// add visitor controller
-export const addVisitor = async (
+export const getApplications = async (
   req: RequestWithUser,
   res: Response,
   next: NextFunction
 ) => {
-  try{
-    const visitor = {
-      name: req.body.name,
-      phoneNumber: req.body.phoneNumber,
-      apartment: req.body.apartment,
-      user: req.user?._id,
-    }
-    const newVisitor = await Visitor.create(visitor) as IVisitor;
-    await newVisitor.save();
-    res.status(200).json({ success: true, data: newVisitor });
-  }
-  catch(error){
+  try {
+
+    if (!req.user) return res.status(401).json({ success: false, data: "Unauthorized" });
+
+    const applications = (await Applications.find({userId: req.user?.id})
+            .populate('apartmentId')
+            .populate('userId'))  as IApplication[];
+
+    return res.status(200).json({ success: true, data: applications });
+  } catch (error) {
     res.status(400).json({ success: false, data: (error as Error).message });
   }
 }
+
+export const applyForApartment = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+      
+      if (!req.user) return res.status(401).json({ success: false, data: "Unauthorized" });
+  
+      const application = (await Applications.create({
+        userId: req.user?.id,
+        apartmentId: req.params.apartmentId,
+        status: "pending",
+      })) as IApplication;
+  
+      return res.status(200).json({ success: true, data: application });
+
+  } catch (error) {
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+};
 
