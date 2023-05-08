@@ -1,6 +1,6 @@
 import express from 'express';
 import { signup, completeSignup,login,logout, forgotPassword,resetPassword,
-    updateDetails,updatePassword,makeApartmentRequest,cancelApartmentRequest,addVisitor
+    updateDetails,updatePassword,makeApartmentRequest,cancelApartmentRequest,addVisitor, getApartmentRequests
  } from '../controllers/userControllers';
  import { createMantainanceRequest } from '../controllers/maintainanceController';
  import { isAuthenticatedUser, authorizeRoles } from "../authentication/auth";
@@ -21,6 +21,8 @@ router.route('/makeApartmentRequest').post(isAuthenticatedUser,makeApartmentRequ
 router.route('/cancelApartmentRequest').put(isAuthenticatedUser,cancelApartmentRequest);
 router.route('/addVisitor').put(isAuthenticatedUser,addVisitor);
 router.route('/maintenanceRequest').post(isAuthenticatedUser, createMantainanceRequest);
+router.route('/applications').get(isAuthenticatedUser, getApartmentRequests);
+// router.route('/applications').get(getApartmentRequests);
 
 
 

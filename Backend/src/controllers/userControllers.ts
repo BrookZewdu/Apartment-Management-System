@@ -430,6 +430,26 @@ export const makeApartmentRequest = async (
   }
 };
 
+export const getApartmentRequests = async (
+  req : RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try{
+    if (!req.user) return res.status(402).json({message : 'unauthorized'});
+    const request = await ApartmentRequest.find({user: req?.user.id}) as IApartmentRequest[];
+
+    // console.log(req?.user.id, await ApartmentRequest.find({}));
+    return res.status(200).json({
+      success : true,
+      data : request
+    });
+  } catch(err) {
+    return res.status(500).json({ message : 'something went wrong' });
+  }
+};
+
+
 // accept a apartment register request and make user a tenant
 export const acceptApartmentRequest = async (
   req: Request,
