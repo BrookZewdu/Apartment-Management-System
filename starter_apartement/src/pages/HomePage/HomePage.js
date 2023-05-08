@@ -14,10 +14,10 @@ import AllApartments from "./TabPages/AllApartments";
 import Home from "./TabPages/Home";
 import { Profile } from "./TabPages/Profile";
 import { useNavigate } from "react-router-dom";
-import { Payments } from "./TabPages/Payment";
 import MaintenanceRequest from "./TabPages/MaintenanceRequest";
 import AddApartment from "./TabPages/AddApartement";
 import RequestRegister from "./TabPages/RequestRegister";
+import { Payment } from "./TabPages/Pay";
 
 const HomePage = () => {
   const [activeTab, setActiveTab] = useRecoilState(activeTabState);
@@ -150,7 +150,7 @@ const HomePage = () => {
         {activeTab === "Add Apartment" && <AddApartment />}
         {activeTab === "Maintenance" && <MaintenanceRequest />}
         {activeTab === "Applications" && <Applications />}
-        {activeTab === "Payment" && <Payments />}
+        {activeTab === "Payment" && <Payment/>}
         {activeTab === "Register Requests" && <RequestRegister />}
       </main>
     </div>
