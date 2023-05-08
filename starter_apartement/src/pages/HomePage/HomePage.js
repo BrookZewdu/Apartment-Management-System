@@ -24,11 +24,11 @@ const HomePage = () => {
   const [signedInUser, setSignedInUser] = useRecoilState(loggedInUserState);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    document.title = "Sign In";
-    const u = { ...signedInUser, role: "user" };
-    setSignedInUser(u);
-  }, []);
+  // useEffect(() => {
+  //   document.title = "Sign In";
+  //   const u = { ...signedInUser, role: "user" };
+  //   setSignedInUser(u);
+  // }, []);
 
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
