@@ -12,7 +12,7 @@ const Navbar = () => {
     <nav className="navbar bg-gray-800">
       <div className="container flex items-center justify-between mx-auto">
         <div className="flex items-center">
-          {signedInUser && (signedInUser.isTenant || signedInUser.role !== "tenant") && (
+          {signedInUser && (
             <Link
               to={"/home"}
               className="flex items-center border border-gray-300 gap-2 rounded-full shadow-md shadow-gray-300 py-2 px-4"
