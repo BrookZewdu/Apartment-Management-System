@@ -1,4 +1,3 @@
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200s
+[build]
+    publish = "public/"
+    base = "./starter_appartement"
