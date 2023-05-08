@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import AppartmentDetailsModal from "./ApplicationDetailModal";
 
 const ApplicationCard = ({ application }) => {
-  const { id, name, status, date, house } = application;
+  const { _id, status, date, house } = application;
   const navigate = useNavigate();
 
   let statusColor = "";
@@ -44,11 +44,11 @@ const ApplicationCard = ({ application }) => {
 
   return (
     <div
-      key={id}
+      key={_id}
       className="flex flex-col w-full max-w-md px-4 py-2 my-2 bg-white border border-gray-200 rounded-md shadow-md"
     >
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-medium">{name}</h3>
+        {/* <h3 className="text-lg font-medium">{name}</h3> */}
         <span
           className={`flex items-center justify-center px-2 py-1 text-sm font-medium rounded-md ${statusColor}`}
         >

@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import Payment from "./TabPages/Payment";
 import MaintenanceRequest from "./TabPages/MaintenanceRequest";
 import AddApartment from "./TabPages/AddApartement";
+import RequestRegister from "./TabPages/RequestRegister";
 
 const HomePage = () => {
   const [activeTab, setActiveTab] = useRecoilState(activeTabState);
@@ -25,6 +26,8 @@ const HomePage = () => {
 
   useEffect(() => {
     document.title = "Sign In";
+    const u = { ...signedInUser, role: "user" };
+    setSignedInUser(u);
   }, []);
 
   const handleTabClick = (tabName) => {
@@ -63,45 +66,68 @@ const HomePage = () => {
     <div className="flex h-screen bg-gray-100">
       <div className="fixed top-0 left-0 flex flex-col h-screen py-4 bg-white border-r border-gray-200 w-60">
         <div className="px-4">
-          <h1 className="text-lg font-bold">Welcome Tenant</h1>
+          <h1 className="text-lg font-bold">
+            Welcome{" "}
+            {signedInUser.role.toUpperCase()[0] +
+              signedInUser.role.toLowerCase().slice(1)}
+          </h1>
         </div>
         <nav className="flex-1 mt-8 space-y-2">
-          <TabItem
-            tabName="Home"
-            Icon={House}
-            onClick={handleTabClick}
-            isActive={activeTab === "Home"}
-          />
+          {signedInUser && signedInUser.role === "manager" && (
+            <>
+              <TabItem
+                tabName="All Apartments"
+                Icon={Clipboard}
+                onClick={handleTabClick}
+                isActive={activeTab === "All Apartments"}
+              />
+              <TabItem
+                tabName="Add Apartment"
+                Icon={Clipboard}
+                onClick={handleTabClick}
+                isActive={activeTab === "Add Apartment"}
+              />
+              <TabItem
+                tabName="Register Requests"
+                Icon={Clipboard}
+                onClick={handleTabClick}
+                isActive={activeTab === "Register Requests"}
+              />
+            </>
+          )}
+          {signedInUser && signedInUser.role === "tenant" && (
+            <>
+              <TabItem
+                tabName="Maintenance"
+                Icon={User}
+                onClick={handleTabClick}
+                isActive={activeTab === "Maintenance Request"}
+              />
+              <TabItem
+                tabName="Payment"
+                Icon={User}
+                onClick={handleTabClick}
+                isActive={activeTab === "Payment"}
+              />
+            </>
+          )}
+          {signedInUser && signedInUser.role === "user" && (
+            <>
+            <TabItem
+              tabName="Home"
+              Icon={House}
+              onClick={handleTabClick}
+              isActive={activeTab === "Home"}
+            />
           <TabItem
             tabName="Applications"
             Icon={Clipboard}
             onClick={handleTabClick}
             isActive={activeTab === "Applications"}
           />
-          <TabItem
-            tabName="All Apartments"
-            Icon={Clipboard}
-            onClick={handleTabClick}
-            isActive={activeTab === "All Apartments"}
-          />
-          <TabItem
-            tabName="Add Apartment"
-            Icon={Clipboard}
-            onClick={handleTabClick}
-            isActive={activeTab === "Add Apartment"}
-          />
-          <TabItem
-            tabName="Payment"
-            Icon={User}
-            onClick={handleTabClick}
-            isActive={activeTab === "Payment"}
-          />
-          <TabItem
-            tabName="Maintenance"
-            Icon={User}
-            onClick={handleTabClick}
-            isActive={activeTab === "Maintenance Request"}
-          />
+          </>
+          )}
+
           <TabItem
             tabName="Profile"
             Icon={User}
@@ -125,6 +151,7 @@ const HomePage = () => {
         {activeTab === "Maintenance" && <MaintenanceRequest />}
         {activeTab === "Applications" && <Applications />}
         {activeTab === "Payment" && <Payment />}
+        {activeTab === "Register Requests" && <RequestRegister />}
       </main>
     </div>
   );

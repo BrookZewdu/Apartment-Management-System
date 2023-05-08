@@ -3,79 +3,22 @@ import { Clipboard, Clock, CheckCircle, XCircle } from "phosphor-react";
 import TabItem from "../components/TabItem";
 import { useRecoilState } from "recoil";
 import ApplicationCard from "../components/ApplicationCard";
+import axios from "axios";
 
 const Applications = () => {
   const [activeTab, setActiveTab] = useState("Pending");
-  const dummyApplications = [
-    {
-      id: 1,
-      status: "Pending",
-      date: "2022-04-23",
-      house: {
-        name: "Cozy Cottage",
-        price: 120000,
-        description: "A charming little cottage perfect for a small family.",
-        images: [
-          "https://example.com/cozy_cottage_exterior.jpg",
-          "https://example.com/cozy_cottage_living_room.jpg",
-          "https://example.com/cozy_cottage_bedroom.jpg",
-        ],
-      },
-    },
-    {
-      id: 2,
-      status: "Accepted",
-      date: "2022-04-20",
-      house: {
-        name: "Spacious Apartment",
-        price: 200000,
-        description:
-          "A luxurious apartment with plenty of room for entertaining.",
-        images: [
-          "https://example.com/spacious_apartment_exterior.jpg",
-          "https://example.com/spacious_apartment_living_room.jpg",
-          "https://example.com/spacious_apartment_kitchen.jpg",
-        ],
-      },
-    },
-    {
-      id: 3,
-      status: "Rejected",
-      date: "2022-04-18",
-      house: {
-        name: "Modern Townhouse",
-        price: 300000,
-        description:
-          "A sleek and modern townhouse with plenty of natural light.",
-        images: [
-          "https://example.com/modern_townhouse_exterior.jpg",
-          "https://example.com/modern_townhouse_living_room.jpg",
-          "https://example.com/modern_townhouse_bedroom.jpg",
-        ],
-      },
-    },
-    {
-      id: 4,
-      status: "Accepted",
-      date: "2022-04-15",
-      house: {
-        name: "Beach House",
-        price: 500000,
-        description:
-          "A beautiful beachfront property with stunning ocean views.",
-        images: [
-          "https://example.com/beach_house_exterior.jpg",
-          "https://example.com/beach_house_living_room.jpg",
-          "https://example.com/beach_house_bedroom.jpg",
-        ],
-      },
-    },
-  ];
-  
-  const [applications, setActiveApplication] = useState(dummyApplications);
+
+  const [applications, setActiveApplication] = useState([]);
+
+  useEffect(() => {
+    axios.get("users/applications").then((response) => {
+      setActiveApplication(response.data.data);
+      console.log("res: ", response.data.data);
+    });
+  }, []);
 
   const filteredApplications = applications.filter(
-    (app) => app.status === activeTab
+    (app) => app.status.toLowerCase() === activeTab.toLowerCase()
   );
 
   return (
@@ -92,13 +35,6 @@ const Applications = () => {
           setActiveTab={setActiveTab}
         />
         <SubNavItem
-          tabName="Accepted"
-          Icon={CheckCircle}
-          count={""}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-        />
-        <SubNavItem
           tabName="Rejected"
           Icon={XCircle}
           count={""}
@@ -109,7 +45,10 @@ const Applications = () => {
       {filteredApplications.length > 0 ? (
         <div className="grid grid-cols-1 gap-4 px-4 mt-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredApplications.map((application) => (
-            <ApplicationCard key={application.id} application={application} />
+            <ApplicationCard
+              key={application._id}
+              application={{ ...application, house: application.apartment }}
+            />
           ))}
         </div>
       ) : (

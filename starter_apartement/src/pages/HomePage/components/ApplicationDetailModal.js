@@ -2,7 +2,7 @@ import React from "react";
 import { X } from "phosphor-react";
 
 const AppartmentDetailsModal = ({ isOpen, closeModal, application }) => {
-  const { id, name, description, price, images } = application;
+  const { name, description, price, images } = application;
 
   return isOpen ? (
     <div className="fixed top-0 left-0 z-10 flex items-center justify-center w-full h-full overflow-hidden">
