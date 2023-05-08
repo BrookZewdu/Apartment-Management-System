@@ -14,7 +14,7 @@ import AllApartments from "./TabPages/AllApartments";
 import Home from "./TabPages/Home";
 import { Profile } from "./TabPages/Profile";
 import { useNavigate } from "react-router-dom";
-import Payments from "./TabPages/Payment";
+import { Payments } from "./TabPages/Payment";
 import MaintenanceRequest from "./TabPages/MaintenanceRequest";
 import AddApartment from "./TabPages/AddApartement";
 import RequestRegister from "./TabPages/RequestRegister";
@@ -46,11 +46,10 @@ const HomePage = () => {
 
     return (
       <button
-        className={`flex items-center justify-start w-full h-12 px-4 transition-colors duration-200 rounded-none focus:outline-none ${
-          isActive
+        className={`flex items-center justify-start w-full h-12 px-4 transition-colors duration-200 rounded-none focus:outline-none ${isActive
             ? "text-white bg-primary"
             : "text-gray-500 hover:text-white hover:bg-secondary"
-        }`}
+          }`}
         onClick={() => handleTabClick(tabName)}
       >
         <Icon
@@ -114,19 +113,19 @@ const HomePage = () => {
           )}
           {signedInUser && signedInUser.role === "user" && (
             <>
-            <TabItem
-              tabName="Home"
-              Icon={House}
-              onClick={handleTabClick}
-              isActive={activeTab === "Home"}
-            />
-          <TabItem
-            tabName="Applications"
-            Icon={Clipboard}
-            onClick={handleTabClick}
-            isActive={activeTab === "Applications"}
-          />
-          </>
+              <TabItem
+                tabName="Home"
+                Icon={House}
+                onClick={handleTabClick}
+                isActive={activeTab === "Home"}
+              />
+              <TabItem
+                tabName="Applications"
+                Icon={Clipboard}
+                onClick={handleTabClick}
+                isActive={activeTab === "Applications"}
+              />
+            </>
           )}
 
           <TabItem

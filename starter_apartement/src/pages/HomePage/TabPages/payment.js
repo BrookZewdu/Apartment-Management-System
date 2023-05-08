@@ -57,7 +57,7 @@ const PaymentCard = ({ payment }) => {
   );
 };
 
-const Payments = () => {
+export const Payments = () => {
   const [activeTab, setActiveTab] = useState("Upcoming");
 
   const [payments, setActiveApplication] = useState([
@@ -125,5 +125,3 @@ const SubNavItem = ({ tabName, Icon, count, activeTab, setActiveTab }) => {
     </button>
   );
 };
-
-export default Payments;
