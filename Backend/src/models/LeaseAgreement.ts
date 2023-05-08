@@ -29,10 +29,10 @@ const leaseAgreementSchema = new Schema<ILeaseAgreement>({
     type: Date, 
     required: true 
 },
-  rent: { 
-    type: Number, 
-    required: true 
-},
+//   rent: { 
+//     type: Number, 
+//     required: true 
+// },
 });
 
 const LeaseAgreement = model<ILeaseAgreement>('LeaseAgreement', leaseAgreementSchema);
