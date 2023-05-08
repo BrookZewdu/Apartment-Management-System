@@ -14,13 +14,13 @@ export const SignIn = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = useLocation();
-  const { from = "/" } = state || {};
+  const { from = "/home" } = state || {};
 
   useEffect(() => {
     document.title = "Sign In";
     const token = localStorage.getItem("authToken");
     if (token !== null) {
-      navigate("/");
+      navigate("/home");
     }
   }, []);
 
