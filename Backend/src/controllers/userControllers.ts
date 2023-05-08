@@ -437,7 +437,7 @@ export const getApartmentRequests = async (
 ) => {
   try{
     if (!req.user) return res.status(402).json({message : 'unauthorized'});
-    const request = await ApartmentRequest.find({user: req?.user.id}) as IApartmentRequest[];
+    const request = await ApartmentRequest.find({user: req?.user.id}).populate('apartment') as IApartmentRequest[];
 
     // console.log(req?.user.id, await ApartmentRequest.find({}));
     return res.status(200).json({
