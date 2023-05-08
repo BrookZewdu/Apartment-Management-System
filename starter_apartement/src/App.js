@@ -6,7 +6,7 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import HomePage from "./pages/HomePage/HomePage";
 import { RecoilRoot } from "recoil";
 import ApplyPage from "./pages/ApplyPage/ApplyPage";
-import ApplicationDetailPage from "./pages/HomePage/components/ApplicationDetailModal";
+// import ApplicationDetailPage from "./pages/HomePage/components/ApplicationDetailModal";
 
 const isAuthenticated = () => {
   console.log("is logged in: ", localStorage.getItem("authToken") !== null);

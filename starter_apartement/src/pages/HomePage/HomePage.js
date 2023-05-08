@@ -14,7 +14,7 @@ import AllApartments from "./TabPages/AllApartments";
 import Home from "./TabPages/Home";
 import { Profile } from "./TabPages/Profile";
 import { useNavigate } from "react-router-dom";
-import Payment from "./TabPages/Payment";
+import Payment from "./TabPages/payment";
 import MaintenanceRequest from "./TabPages/MaintenanceRequest";
 import AddApartment from "./TabPages/AddApartement";
 import RequestRegister from "./TabPages/RequestRegister";
@@ -26,7 +26,7 @@ const HomePage = () => {
 
   useEffect(() => {
     document.title = "Sign In";
-    const u = { ...signedInUser, role: "user" };
+    const u = { ...signedInUser, role: "manager" };
     setSignedInUser(u);
   }, []);
 
@@ -93,6 +93,7 @@ const HomePage = () => {
                 onClick={handleTabClick}
                 isActive={activeTab === "Register Requests"}
               />
+
             </>
           )}
           {signedInUser && signedInUser.role === "tenant" && (
