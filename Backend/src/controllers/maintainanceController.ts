@@ -61,6 +61,9 @@ export const createMantainanceRequest = async (
             })
         }
         const apartment = (await Apartment.findOne({occupants: user._id})) as IApartment;
+        
+        if (!apartment) return res.status(401).json({ success: false, data: "you are not a tenant" });
+
          const { description, type } = req.body;
         const maintainanceRequest: IMaintainance = await Maintainance.create({ user:req.user?._id, apartment: apartment._id, description, type });
         res.status(200).json({ success: true, data: maintainanceRequest });
