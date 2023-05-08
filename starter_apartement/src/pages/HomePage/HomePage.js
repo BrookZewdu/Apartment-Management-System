@@ -151,7 +151,7 @@ const HomePage = () => {
         {activeTab === "Add Apartment" && <AddApartment />}
         {activeTab === "Maintenance" && <MaintenanceRequest />}
         {activeTab === "Applications" && <Applications />}
-        {activeTab === "Payment" && <Payment />}
+        {activeTab === "Payment" && <Payments />}
         {activeTab === "Register Requests" && <RequestRegister />}
       </main>
     </div>
