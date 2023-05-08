@@ -15,7 +15,7 @@ export interface IUser extends Document {
   isTenant: boolean;
   isVerified: boolean;
   createdAt: Date;
-  role: "tenant" | "manager" | "owner" | "security guard";
+  role: "user" |"tenant" | "manager" | "owner" | "security guard";
   leaseAgreement?: ILeaseAgreement["_id"];
   resetPasswordToken?: string; 
   resetPasswordExpire?: Date; 
@@ -71,7 +71,7 @@ isVerified: {
 },
   role: { 
     type: String, 
-    default: "tenant" 
+    default: "user" 
 },
   leaseAgreement: { 
     type: Schema.Types.ObjectId, 
