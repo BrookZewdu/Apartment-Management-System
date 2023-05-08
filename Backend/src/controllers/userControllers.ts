@@ -70,7 +70,7 @@ export const signup = async (
       await sendEmail({
         to: email,
         subject: "Email Verification Instructions",
-        text: `Please use the following link to verify your email: http://localhost:3000/api/users/verify-email/${emailVerificationToken}`,
+        text: `Please use the following link to verify your email: http://apartmentease.onrender.com/api/users/verify-email/${emailVerificationToken}`,
       });
 
       await user.save();
