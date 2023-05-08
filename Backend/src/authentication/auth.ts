@@ -14,6 +14,7 @@ export const isAuthenticatedUser = async (req: RequestWithUser, res: Response, n
   const { token } = req.cookies;
 
   if (!token) {
+    console.log('not authenticated');
     return res.status(401).json({ message: 'Login first to access this resource' });
   }
 
