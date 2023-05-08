@@ -13,7 +13,7 @@ import ApartmentRequest,{IApartmentRequest} from '../models/registerRequest';
 import { constrainedMemory } from "process";
 import validateSignupRequest from "../helpers/validator";
 import Applications, { IApplication } from "../models/applications";
-
+import Visitor,{ IVisitor } from "../models/addVisitor";
 // Signup controller
 export const signup = async (
   req: Request,
@@ -482,4 +482,42 @@ export const applyForApartment = async (
     res.status(400).json({ success: false, data: (error as Error).message });
   }
 };
+
+
+export const cancelApartmentRequest = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try{
+    const request = await ApartmentRequest.findById(req.params.id) as IApartmentRequest;
+    if(!request) return res.status(404).json({ success: false, data: "Request not found" });
+    await request.remove();
+    res.status(200).json({ success: true, data: "Request canceled successfully" });
+  }
+  catch(error){
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+}
+
+export const addVisitor = async (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
+  try{
+    const visitor = {
+      name: req.body.name,
+      phoneNumber: req.body.phoneNumber,
+      apartment: req.body.apartment,
+      user: req.user?._id,
+    }
+    const newVisitor = await Visitor.create(visitor) as IVisitor;
+    await newVisitor.save();
+    res.status(200).json({ success: true, data: newVisitor });
+  }
+  catch(error){
+    res.status(400).json({ success: false, data: (error as Error).message });
+  }
+}
 
