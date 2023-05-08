@@ -3,7 +3,7 @@ import { login } from "../../services/authService";
 import { XCircle } from "@phosphor-icons/react";
 import { loggedInUserState } from "../../recoil_state";
 import { useSetRecoilState } from "recoil";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
 export const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -13,14 +13,16 @@ export const SignIn = () => {
   const setSignedInUser = useSetRecoilState(loggedInUserState);
   const navigate = useNavigate();
   const location = useLocation();
+  const { state } = useLocation();
+  const { from = "/" } = state || {};
 
   useEffect(() => {
     document.title = "Sign In";
-    // const token = localStorage.getItem("authToken");
-    // if (token !== null) {
-    //     navigate("/home");
-    // }
-  }, [navigate]);
+    const token = localStorage.getItem("authToken");
+    if (token !== null) {
+      navigate("/");
+    }
+  }, []);
 
   const removeError = (id) => {
     setErrors(errors.filter((error) => error.id !== id));
@@ -38,7 +40,9 @@ export const SignIn = () => {
         setSignedInUser(data.data);
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("loggedInUser", JSON.stringify(data.data));
-        navigate("/home");
+        console.log("navigate to home");
+        navigate(from);
+        console.log("navigate to home finished");
       })
       .catch((error) => {
         const random = Math.random().toString(36).substring(7);
@@ -58,11 +62,17 @@ export const SignIn = () => {
   };
 
   return (
-    <div className="w-screen h-screen  py-3">
-      <div className="grid w-screen grid-cols-2 md:grid-cols-1  gap-4">
+    <div className="w-screen h-screen">
+      <div className="grid w-screen grid-cols-2 gap-4">
         <div className="flex flex-col w-full">
-          <div className="grid grid-cols-1 px-8 pt-8 my-auto md:pt-0 md:px-24 lg:px-32 border bg-white mx-auto mt-5 shadow-md-gray offset-x-7 offset-y-7">
-            <p className="text-3xl font-bold text-neutral pt-5">
+          <div className="flex justify-center pt-12 md:justify-start md:pl-12 md:-mb-24">
+            <a href="#" className="p-4 text-xl font-bold text-white bg-black">
+              Logo
+            </a>
+          </div>
+
+          <div className="grid grid-cols-1 px-8 pt-8 my-auto md:pt-0 md:px-24 lg:px-32">
+            <p className="text-3xl font-bold text-neutral">
               Sign in to your account
             </p>
 
@@ -112,9 +122,6 @@ export const SignIn = () => {
               </button>
             </form>
             <div className="pt-12 pb-12 text-center">
-              <Link to={`/forget-password`} className="font-semibold">
-                  forget password
-                </Link>
               <p>
                 Don't have an account?{" "}
                 <a href={`/sign-up`} className="font-semibold underline">
@@ -125,13 +132,13 @@ export const SignIn = () => {
           </div>
         </div>
 
-        {/* <div className="w-full shadow-2xl">
+        <div className="w-full shadow-2xl">
           <img
             className="hidden object-cover w-full h-screen md:block"
             src="./signin_image.jpg"
             alt="A banner with a group of A2SV students"
           />
-        </div> */}
+        </div>
       </div>
       <div className="toast">
         {errors.map((error) => (

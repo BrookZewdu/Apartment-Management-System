@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
-    <div className="flex items-center justify-center py-10">
+    <div className="image flex items-center justify-center py-10">
       <div className="container px-4 mx-auto">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-2">
           <div className="flex flex-col items-start justify-center">
             <h1 className="mb-4 text-4xl font-bold leading-tight text-white">
               Welcome to our luxurious apartment living
             </h1>
-            <p className="mb-8 text-lg text-white">
+            <p className="mb-8 text-lg text-gray">
               Welcome to our beautiful apartment complex! Our spacious and
               modern units are perfect for anyone looking for a comfortable and
               convenient living space.Each unit features a well-designed layout
@@ -27,13 +27,13 @@ const Hero = () => {
               Join Now
             </Link>
           </div>
-          {/* <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center">
             <img
-              src="/images/hero-image.png"
+              src="./images/apartment3.jpg"
               alt="Collaboration"
               className="object-contain w-full h-full"
             />
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

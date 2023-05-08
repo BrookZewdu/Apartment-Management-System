@@ -1,164 +1,120 @@
 import React, { useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
-import Navbar from "../../LandingPage/components/Navbar";
-import Footer from "../../LandingPage/components/Footer";
 import Modal from "react-modal";
-import { TrashIcon, PencilIcon } from "@heroicons/react/solid";
+import { Trash, Pencil } from "@phosphor-icons/react";
 import { apartmentListState } from "../../../recoil_state";
 // import { roo msState } from "../atoms";
-import { getApartments, saveApartment, deleteApartment } from "../../../services/apartmentService";
+import {
+  getApartments,
+  getApartment,
+  deleteApartment,
+  updateApartment,
+} from "../../../services/apartmentService";
+import { Navigate } from "react-router-dom";
 
 const ApartmentList = () => {
-  const Apartmentlist = [
-    {
-      id: 1,
-      title: "Cozy Studio",
-      type: "Studio",
-      description:
-        "A small and cozy studio apartment in the heart of the city.",
-      status: "Available",
-      price: 1000,
-      image: "https://example.com/studio.jpg",
-    },
-    {
-      id: 2,
-      title: "Spacious Two-BedApartment",
-      type: "Apartment",
-      description:
-        "A large two-bedApartment apartment with plenty of space and natural light.",
-      status: "Occupied",
-      price: 2000,
-      image: "https://example.com/apartment.jpg",
-    },
-    {
-      id: 3,
-      title: "Modern Loft",
-      type: "Loft",
-      description:
-        "A stylish and modern loft with high ceilings and industrial details.",
-      status: "Available",
-      price: 1500,
-      image: "https://example.com/loft.jpg",
-    },
-    // more Apartments...
-  ];
+  const [apartments, setApartments] = useState([]);
 
-  const [apartments, setApartments] = useRecoilState(apartmentListState);
-  const [form, setForm] = useState({
-    id: null,
-    title: "",
-    type: "",
-    description: "",
-    status: "",
-    price: "",
-    image: "",
-  });
+  const [description, setDescription] = useState("");
+  const [status, setStatus] = useState("");
+  const [price, setPrice] = useState("");
+
   const [isEditing, setIsEditing] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await getApartments();
-      setApartments(data);
-    };
-    fetchData();
-  }, [setApartments]);
+  const [id, setId] = useState(null);
 
   const handleDelete = async (id) => {
-    await deleteApartment(id);
-    setApartments((prevApartments) => prevApartments.filter((Apartment) => Apartment.id !== id));
+    deleteApartment(id).then((data) => {
+      getApartments().then((data) => {
+        setApartments(data.data);
+      });
+    });
   };
 
-  const handleEdit = (apartment) => {
-    setForm(apartment);
+  const handleEdit = (id) => {
+    getApartment(id).then((data) => {
+      setDescription(data.data.description);
+      setStatus(data.data.available ? "Available" : "Not Available");
+      setPrice(data.data.price);
+      setId(data.data._id);
+    });
+
     setIsEditing(true);
     setModalIsOpen(true);
   };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setForm((prevForm) => ({ ...prevForm, [name]: value }));
-  };
-
-  const handleImageChange = (event) => {
-    const { name, files } = event.target;
-    const url = URL.createObjectURL(files[0]);
-    setForm((prevForm) => ({ ...prevForm, [name]: url }));
-  };
-
   const handleSubmit = async (event) => {
+    const formData = new FormData();
+    formData.set("description", description);
+    formData.set("status", status);
+    formData.set("price", price);
+    // formData.set("image", image);
+
     event.preventDefault();
-    await saveApartment(form);
-    setForm({
-      id: null,
-      title: "",
-      type: "",
-      description: "",
-      status: "",
-      price: "",
-      image: "",
+    updateApartment(id, formData).then((data) => {
+      getApartments().then((data) => {
+        setApartments(data.data);
+      });
     });
+
     setIsEditing(false);
     setModalIsOpen(false);
-    const data = await getApartments();
-    setApartments(data);
   };
+
+  useEffect(() => {
+    getApartments().then((data) => {
+      setApartments(data.data);
+    });
+  }, []);
 
   return (
     <>
-      <Navbar />
       <div className="flex flex-col mt-8">
-        <h2 className="text-lg font-large mb-4 flex justify-center">
+        <h2 className="flex justify-center mb-4 text-lg font-large">
           All Apartments
         </h2>
 
-        <table className="table-auto border-collapse w-full mt-4 mb-16">
+        <table className="w-full mt-4 mb-16 border-collapse table-auto">
           <thead>
             <tr>
-              <th className="border border-gray-400 px-4 py-2">Title</th>
-              <th className="border border-gray-400 px-4 py-2">Type</th>
-              <th className="border border-gray-400 px-4 py-2">Description</th>
-              <th className="border border-gray-400 px-4 py-2">Status</th>
-              <th className="border border-gray-400 px-4 py-2">Price</th>
-              <th className="border border-gray-400 px-4 py-2">Image</th>
-              <th className="border border-gray-400 px-4 py-2">Actions</th>
+              <th className="px-4 py-2 border border-gray-400">Description</th>
+              <th className="px-4 py-2 border border-gray-400">Status</th>
+              <th className="px-4 py-2 border border-gray-400">Price</th>
+              {/* <th className="px-4 py-2 border border-gray-400">Image</th> */}
+              <th className="px-4 py-2 border border-gray-400">Actions</th>
             </tr>
           </thead>
           <tbody>
             {apartments.map((Apartment) => (
-              <tr key={Apartment.id}>
-                <td className="border border-gray-400 px-4 py-2">{Apartment.id}</td>
-                <td className="border border-gray-400 px-4 py-2">
-                  {Apartment.title}
+              <tr key={Apartment._id}>
+                <td className="px-4 py-2 border border-gray-400">
+                  {Apartment.description.slice(0, 47)}
                 </td>
-                <td className="border border-gray-400 px-4 py-2">
-                  {Apartment.type}
+                <td className="px-4 py-2 border border-gray-400">
+                  {Apartment.available ? "Available" : "Not Available"}
                 </td>
-                <td className="border border-gray-400 px-4 py-2">
-                  {Apartment.description}
-                </td>
-                <td className="border border-gray-400 px-4 py-2">
-                  {Apartment.status}
-                </td>
-                <td className="border border-gray-400 px-4 py-2">
+                <td className="px-4 py-2 border border-gray-400">
                   {Apartment.price}
                 </td>
-                <td className="border border-gray-400 px-4 py-2">
+                {/* <td className="px-4 py-2 border border-gray-400">
                   <img
-                    className="h-10 w-10 object-cover rounded-full"
+                    className="object-cover w-10 h-10 rounded-full"
                     src={Apartment.image}
                     alt={Apartment.title}
                   />
-                </td>
-                <td className="border border-gray-400 px-4 py-2">
-                  <button className="mx-2" onClick={() => handleEdit(Apartment)}>
-                    <PencilIcon className="h-5 w-5 text-indigo-500" />
+                </td> */}
+                <td className="px-4 py-2 border border-gray-400">
+                  <button
+                    className="mx-2"
+                    onClick={() => handleEdit(Apartment._id)}
+                  >
+                    <Pencil className="w-5 h-5 text-indigo-500" />
                   </button>
                   <button
                     className="mx-2"
-                    onClick={() => handleDelete(Apartment.id)}
+                    onClick={() => handleDelete(Apartment._id)}
                   >
-                    <TrashIcon className="h-5 w-5 text-red-500" />
+                    <Trash className="w-5 h-5 text-red-500" />
                   </button>
                 </td>
               </tr>
@@ -167,13 +123,13 @@ const ApartmentList = () => {
         </table>
       </div>
       {/* <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+        className="px-4 py-2 mt-4 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
         onClick={() => setModalIsOpen(true)}
       >
         Add Apartment
       </button> */}
 
-      <div className="modal max-w-3xl max-h-screen">
+      <div className="max-w-3xl max-h-screen modal">
         <Modal
           isOpen={modalIsOpen}
           onRequestClose={() => setModalIsOpen(false)}
@@ -199,60 +155,34 @@ const ApartmentList = () => {
             },
           }}
         >
-          <h2 className="text-lg font-medium mb-4">
+          <h2 className="mb-4 text-lg font-medium">
             {isEditing ? "Edit Apartment" : "Add Apartment"}
           </h2>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col mb-4">
-              <label className="mb-2 font-medium" htmlFor="tenantName">
-                Apartment Title
-              </label>
-              <input
-                className="border rounded-lg py-2 px-3"
-                type="text"
-                id="tenantName"
-                name="tenantName"
-                value={form.title}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex flex-col mb-4">
-              <label className="mb-2 font-medium" htmlFor="price">
-                Apartment Type
-              </label>
-              <input
-                className="border rounded-lg py-2 px-3"
-                type="number"
-                id="price"
-                name="price"
-                value={form.type}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex flex-col mb-4">
-              <label className="mb-2 font-medium" htmlFor="price">
+              <label className="mb-2 font-medium" htmlFor="description">
                 Apartment Description
               </label>
               <input
-                className="border rounded-lg py-2 px-3"
-                type="number"
-                id="price"
-                name="price"
-                value={form.description}
-                onChange={handleChange}
+                className="px-3 py-2 border rounded-lg"
+                type="text"
+                id="description"
+                name="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </div>
             <div className="flex flex-col mb-4">
-              <label className="mb-2 font-medium" htmlFor="price">
+              <label className="mb-2 font-medium" htmlFor="status">
                 Apartment Status
               </label>
               <input
-                className="border rounded-lg py-2 px-3"
-                type="number"
-                id="price"
-                name="price"
-                value={form.status}
-                onChange={handleChange}
+                className="px-3 py-2 border rounded-lg"
+                type="text"
+                id="status"
+                name="status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
               />
             </div>
             <div className="flex flex-col mb-4">
@@ -260,18 +190,18 @@ const ApartmentList = () => {
                 Apartment Price
               </label>
               <input
-                className="border rounded-lg py-2 px-3"
+                className="px-3 py-2 border rounded-lg"
                 type="number"
                 id="price"
                 name="price"
-                value={form.price}
-                onChange={handleChange}
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
               />
             </div>
-            <div>
+            {/* <div>
               <label
                 htmlFor="image"
-                className="text-gray-600 mb-2 block font-medium"
+                className="block mb-2 font-medium text-gray-600"
               >
                 Apartment Image
               </label>
@@ -281,20 +211,26 @@ const ApartmentList = () => {
                 name="image"
                 accept=".jpg,.jpeg,.png"
                 onChange={handleImageChange}
-                className="border border-gray-400 rounded-md p-2 w-full"
+                className="w-full p-2 border border-gray-400 rounded-md"
                 required
               />
-            </div>
+            </div> */}
             <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
               type="submit"
             >
               {isEditing ? "Save Changes" : "Add Apartment"}
             </button>
+            <button
+              className="px-4 py-2 ml-4 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
+              type="submit"
+              onClick={() => setModalIsOpen(false)}
+            >
+              cancel
+            </button>
           </form>
         </Modal>
       </div>
-      <Footer />
     </>
   );
 };

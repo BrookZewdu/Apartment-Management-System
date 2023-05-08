@@ -1,28 +1,68 @@
 import axios from "axios";
 
-// Define the base URL for the room API
-const BASE_URL = "http://localhost:5000/api";
-
-// const BASE_URL = "http://localhost:3000";
-
 export const getApartments = async () => {
-  const response = await axios.get(`${BASE_URL}/apartments`);
-  return response.data;
+  return await axios.get(`/apartments`).then((response) => {
+    return response.data;
+  });
+};
+
+export const updateApartment = async (ApartmentId, formData) => {
+  return await axios
+    .put(`/apartments/update/${ApartmentId}`, formData)
+    .then((response) => {
+      return response.data;
+    });
+};
+
+export const getApartment = async (ApartmentId) => {
+  return await axios.get(`/apartments/${ApartmentId}`).then((response) => {
+    return response.data;
+  });
 };
 
 export const saveApartment = async (Apartement) => {
-  if (Apartement.id) {
-    const response = await axios.put(`${BASE_URL}/apartments/${Apartement.id}`, Apartement);
-    return response.data;
-  } else {
-    const response = await axios.post(`${BASE_URL}/apartments`, Apartement);
-    return response.data;
-  }
+  return await axios
+    .post(`/apartments/createApartment`, Apartement)
+    .then((response) => {
+      return response.data;
+    });
+  // }
 };
 
 export const deleteApartment = async (ApartmentId) => {
-  const response = await axios.delete(`${BASE_URL}/rooms/${ApartmentId}`);
-  return response.data;
+  return await axios
+    .delete(`/apartments/delete/${ApartmentId}`)
+    .then((response) => {
+      return response.data;
+    });
+};
+
+export const freeApartment = async () => {
+  return await axios.get(`/apartments/free/apartment`).then((response) => {
+    return response.data;
+  });
+};
+
+export const occupiedApartment = async () => {
+  return await axios.get(`/apartments/occupied/apartment`).then((response) => {
+    return response.data;
+  });
+};
+
+export const addReview = async (review, id) => {
+  return await axios
+    .put(`/apartments/addReview/${id}`, review)
+    .then((response) => {
+      return response.data;
+    });
+};
+
+export const makeApartmentRequest = async (id, date) => {
+  return axios
+    .post(`/users/makeApartmentRequest`, { id, meetingDate: date })
+    .then((response) => {
+      return response.data;
+    });
 };
 
 // // Define a service to fetch the list of rooms from the API
@@ -68,4 +108,4 @@ export const deleteApartment = async (ApartmentId) => {
 //     throw new Error("Failed to delete room");
 //   }
 // };
-// // 
+// //

@@ -1,9 +1,8 @@
 import React from "react";
-
+import Navbar from './components/Navbar';
 import Hero from "./components/Hero";
 import Featured from "./components/Featured";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import Footer from './components/Footer';
 
 export default function LandingPage() {
   return (

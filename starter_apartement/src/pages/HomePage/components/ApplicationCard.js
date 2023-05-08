@@ -1,10 +1,10 @@
 import { Clipboard, Clock, CheckCircle, XCircle } from "phosphor-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ApplicationDetailsModal from "./ApplicationDetailModal";
+import AppartmentDetailsModal from "./ApplicationDetailModal";
 
 const ApplicationCard = ({ application }) => {
-  const { id, name, status, date } = application;
+  const { id, name, status, date, house } = application;
   const navigate = useNavigate();
 
   let statusColor = "";
@@ -56,8 +56,11 @@ const ApplicationCard = ({ application }) => {
           {status}
         </span>
       </div>
-      <p className="mt-2 text-gray-500">{`Applied on ${date}`}</p>
-      <div className="flex justify-end mt-2">
+      <div className="flex items-center justify-between">
+        <p className="font-medium">Applied Date:</p>
+        <p>{date}</p>
+      </div>
+      <div className="flex justify-end mt-5">
         <button
           onClick={() => setIsModalOpen(true)}
           className="px-4 py-2 text-sm font-medium text-white rounded-md bg-primary"
@@ -65,9 +68,9 @@ const ApplicationCard = ({ application }) => {
           View Details
         </button>
       </div>
-      <ApplicationDetailsModal
+      <AppartmentDetailsModal
         isOpen={isModalOpen}
-        application={application}
+        application={house}
         closeModal={() => {
           setIsModalOpen(false);
         }}

@@ -6,8 +6,8 @@ export const login = async (email, password) => {
     });
 };
 
-export const register = async (firstName, lastName, telegramUrl, email, password) => {
-    return axios.post("/users/signup", { name: firstName, lastname: lastName, telegram: telegramUrl, email, password }).then((response) => {
-        return response.data;
+export const register = async (data) => {
+    return axios.post("/users/signup", data).then((response) => {
+        return response.data.data;
     });
 };

@@ -14,9 +14,12 @@ export const SignUp = () => {
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     document.title = "Sign Up";
+    if (localStorage.getItem("authToken") !== null) {
+      navigate("/home");
+    }
   }, []);
 
   const removeError = (id) => {
@@ -29,7 +32,7 @@ export const SignUp = () => {
     if (loading) return;
     setLoading(true);
     const formData = new FormData();
-    formData.set("name", name);
+    formData.set("name", String(name));
     formData.set("fatherName", fatherName);
     formData.set("grandFatherName", grandFatherName);
     formData.set("phoneNumber", phoneNumber);
@@ -38,7 +41,6 @@ export const SignUp = () => {
     formData.set("avatar", avatar[0]);
     register(formData)
       .then((data) => {
-        console.log(data);
         navigate("/pending");
       })
       .catch((error) => {
@@ -59,26 +61,26 @@ export const SignUp = () => {
   };
 
   return (
-    <div className="w-screen h-screen mx-auto">
-      <div className="grid  gap-4 w-full h-full">
-        <div className="w-full flex flex-col h-screen mx-auto">
-          <div className="h-full w-full overflow-scroll scroll-m-0">
-            <div className="grid grid-cols-1 my-20 mx-auto pt-8 md:pt-0 px-8 md:px-24 lg:px-32 border bg-white mt-5 shadow-md-gray offset-x-1 offset-y-1">
-              <div className="flex mx-auto">
+    <div className="w-screen h-screen">
+      <div className="grid w-screen h-screen grid-cols-2 gap-4">
+        <div className="flex flex-col w-full h-screen">
+          <div className="w-full h-full overflow-scroll scroll-m-0">
+            <div className="grid grid-cols-1 px-8 pt-8 mx-auto my-20 md:pt-0 md:px-24 lg:px-32">
+              <div className="flex">
                 <p className="text-3xl font-bold text-neutral">
-                  <span> create your account</span>
+                  Join<span> </span>
                 </p>
-                {/* <Binoculars size={32} weight="bold" fill="text-neutral" /> */}
+                <Binoculars size={32} weight="bold" fill="text-neutral" />
               </div>
               <p className="pt-1">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
                 Already have an account?{" "}
-                <a href={`/sign-in`} className="underline font-semibold">
+                <a href={`/sign-in`} className="font-semibold underline">
                   Login here.
                 </a>
               </p>
-              <form className="flex flex-col pt-3 gap-1 mx-auto">
-                <div className="form-control w-full ">
+              <form className="flex flex-col gap-1 pt-3 mx-auto">
+                <div className="w-full form-control ">
                   <label className="label">
                     <span className="label-text">First Name</span>
                   </label>
@@ -86,14 +88,14 @@ export const SignUp = () => {
                     name="first-name"
                     type="text"
                     placeholder="John"
-                    className="input input-bordered w-full max-w-md "
+                    className="w-full max-w-md input input-bordered "
                     value={name}
                     onChange={(e) => {
                       setname(e.target.value);
                     }}
                   />
                 </div>
-                <div className="form-control w-full">
+                <div className="w-full form-control">
                   <label className="label">
                     <span className="label-text">middle Name</span>
                   </label>
@@ -101,7 +103,7 @@ export const SignUp = () => {
                     name="middle-name"
                     type="text"
                     placeholder="Doe"
-                    className="input input-bordered w-full max-w-md"
+                    className="w-full max-w-md input input-bordered"
                     value={fatherName}
                     onChange={(e) => {
                       setFatherName(e.target.value);
@@ -109,7 +111,7 @@ export const SignUp = () => {
                   />
                 </div>
 
-                <div className="form-control w-full">
+                <div className="w-full form-control">
                   <label className="label">
                     <span className="label-text">Last Name</span>
                   </label>
@@ -117,14 +119,14 @@ export const SignUp = () => {
                     name="last-name"
                     type="text"
                     placeholder="Doe"
-                    className="input input-bordered w-full max-w-md"
+                    className="w-full max-w-md input input-bordered"
                     value={grandFatherName}
                     onChange={(e) => {
                       setGrandFatherName(e.target.value);
                     }}
                   />
                 </div>
-                <div className="form-control w-full">
+                <div className="w-full form-control">
                   <label className="label">
                     <span className="label-text">Email</span>
                   </label>
@@ -132,14 +134,14 @@ export const SignUp = () => {
                     name="email"
                     type="email"
                     placeholder="your@email.com"
-                    className="input input-bordered w-full max-w-md"
+                    className="w-full max-w-md input input-bordered"
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
                     }}
                   />
                 </div>
-                <div className="form-control w-full">
+                <div className="w-full form-control">
                   <label className="label">
                     <span className="label-text">Phone number</span>
                   </label>
@@ -147,12 +149,12 @@ export const SignUp = () => {
                     name="phone number"
                     type="tel"
                     placeholder="mobile"
-                    className="input input-bordered w-full max-w-md"
+                    className="w-full max-w-md input input-bordered"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                   />
                 </div>
-                <div className="form-control w-full">
+                <div className="w-full form-control">
                   <label className="label">
                     <span className="label-text">Password</span>
                   </label>
@@ -160,14 +162,14 @@ export const SignUp = () => {
                     name="password"
                     type="password"
                     placeholder="Password"
-                    className="input input-bordered w-full max-w-md"
+                    className="w-full max-w-md input input-bordered"
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
                     }}
                   />
                 </div>
-                <div className="form-control w-full">
+                <div className="w-full form-control">
                   <label className="label">
                     <span className="label-text">profile picture</span>
                   </label>
@@ -175,7 +177,7 @@ export const SignUp = () => {
                     name="profile picture"
                     type="file"
                     placeholder="profile picture"
-                    className="input input-bordered w-full max-w-md"
+                    className="w-full max-w-md input input-bordered"
                     onChange={(e) => setAvatar(e.target.files)}
                   />
                 </div>
@@ -193,6 +195,14 @@ export const SignUp = () => {
               </form>
             </div>
           </div>
+        </div>
+
+        <div className="w-full shadow-2xl">
+          <img
+            className="hidden object-cover w-full h-screen md:block"
+            src="./signin_image.jpg"
+            alt="A banner with a group of A2SV students"
+          />
         </div>
       </div>
       <div className="toast">

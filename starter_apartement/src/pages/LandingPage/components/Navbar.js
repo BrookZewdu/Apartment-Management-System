@@ -3,22 +3,44 @@ import { Link } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loggedInUserState } from "../../../recoil_state";
 import { Warehouse } from "@phosphor-icons/react";
+import "./Navbar.css";
 
 const Navbar = () => {
   const signedInUser = useRecoilValue(loggedInUserState);
-  console.log(signedInUser, "iiiiiiiiiii")
+
   return (
-    <nav className=" bg-gray-800">
-      <div className="flex items-center justify-between px-6 py-4 mx-auto max-w-7xl">
+    <nav className="navbar bg-gray-800">
+      <div className="container flex items-center justify-between mx-auto">
         <div className="flex items-center">
-          <Link to="/" className="text-xl font-bold text-white flex">
-            <Warehouse size={34}/>
+          {signedInUser && (signedInUser.isTenant || signedInUser.role !== "tenant") && (
+            <Link
+              to={"/home"}
+              className="flex items-center border border-gray-300 gap-2 rounded-full shadow-md shadow-gray-300 py-2 px-4"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                />
+              </svg>
+            </Link>
+          )}
+          <Link to="/" className="ml-3 text-xl font-bold text-white flex">
+            <Warehouse size={34} />
             <div>
               <h1>__APARMENT</h1>
             </div>
           </Link>
         </div>
-        <div className=" flex items-center">
+        <div className="flex items-center">
           {signedInUser != undefined ? (
             <div className="flex items-center gap-2">
               <div className="w-24">
