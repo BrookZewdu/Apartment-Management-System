@@ -399,25 +399,36 @@ export const makeSecurityGuard = async (
 
 // make a apartment register request
 export const makeApartmentRequest = async (
-  req: Request,
+  req: RequestWithUser,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const user = await User.findById(req.params.id) as IUser;
-    const apartment = await Apartment.findById(req.body.apartment) as IApartment;
+    // const user = (await User.findById(req.user.id)) as IUser;
+    if (!req.user) return res.status(400).json({ message: "Bad request1" });
+    const user = req?.user;
+    console.log(req.user, user);
+    // const i = mongoose.types.ObjectId(req.body.id)
+    const apartment = (await Apartment.findById(req.body.id)) as IApartment;
+    if (!apartment) return res.status(404).send({message: 'No Apartment'});
+      
+    
+    console.log("apartment", apartment);
     const registerRequest = {
       apartment: apartment._id,
       user: user._id,
-      meetingDate: req.body.meetingDate,
+      meetingDate: req.body.meetingDate
     };
-    const request = await ApartmentRequest.create(registerRequest) as IApartmentRequest;
+    const request = (await ApartmentRequest.create(
+      registerRequest
+    )) as IApartmentRequest;
     await request.save();
     res.status(200).json({ success: true, data: request });
   } catch (error) {
+    console.error(error);
     res.status(400).json({ success: false, data: (error as Error).message });
   }
-}
+};
 
 // accept a apartment register request and make user a tenant
 export const acceptApartmentRequest = async (
@@ -430,6 +441,7 @@ export const acceptApartmentRequest = async (
     const user = await User.findById(apartmentRequest.user) as IUser;
     const apartment = await Apartment.findById(apartmentRequest.apartment) as IApartment;
     user.isTenant = true;
+    
     await user.save();
     apartment.available = false;
     await apartment.save();
@@ -442,46 +454,48 @@ export const acceptApartmentRequest = async (
   }
 }
 
-export const getApplications = async (
-  req: RequestWithUser,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-
-    if (!req.user) return res.status(401).json({ success: false, data: "Unauthorized" });
-
-    const applications = (await Applications.find({userId: req.user?.id})
-            .populate('apartmentId')
-            .populate('userId'))  as IApplication[];
-
-    return res.status(200).json({ success: true, data: applications });
-  } catch (error) {
-    res.status(400).json({ success: false, data: (error as Error).message });
-  }
-}
-
-export const applyForApartment = async (
-  req: RequestWithUser,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
+// duplicate code 
+// export const applyForApartment = async (
+//   req: RequestWithUser,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
       
-      if (!req.user) return res.status(401).json({ success: false, data: "Unauthorized" });
+//       if (!req.user) return res.status(401).json({ success: false, data: "Unauthorized" });
   
-      const application = (await Applications.create({
-        userId: req.user?.id,
-        apartmentId: req.params.apartmentId,
-        status: "pending",
-      })) as IApplication;
+//       const application = (await Applications.create({
+//         userId: req.user?.id,
+//         apartmentId: req.params.apartmentId,
+//         status: "pending",
+//       })) as IApplication;
   
-      return res.status(200).json({ success: true, data: application });
+//       return res.status(200).json({ success: true, data: application });
 
-  } catch (error) {
-    res.status(400).json({ success: false, data: (error as Error).message });
-  }
-};
+//   } catch (error) {
+//     res.status(400).json({ success: false, data: (error as Error).message });
+//   }
+// };
+
+// export const getApplications = async (
+//   req: RequestWithUser,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+
+//     if (!req.user) return res.status(401).json({ success: false, data: "Unauthorized" });
+
+//     const applications = (await Applications.find({userId: req.user?.id})
+//             .populate('apartmentId')
+//             .populate('userId'))  as IApplication[];
+
+//     return res.status(200).json({ success: true, data: applications });
+//   } catch (error) {
+//     res.status(400).json({ success: false, data: (error as Error).message });
+//   }
+// }
+
 
 
 export const cancelApartmentRequest = async (

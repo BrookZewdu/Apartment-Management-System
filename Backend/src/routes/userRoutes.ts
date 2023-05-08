@@ -20,7 +20,7 @@ router.route('/updatepassword').put(isAuthenticatedUser,updatePassword);
 router.route('/makeApartmentRequest').post(isAuthenticatedUser,makeApartmentRequest);
 router.route('/cancelApartmentRequest').put(isAuthenticatedUser,cancelApartmentRequest);
 router.route('/addVisitor').put(isAuthenticatedUser,addVisitor);
-router.route('/maintenanceRequest').post(createMantainanceRequest);
+router.route('/maintenanceRequest').post(isAuthenticatedUser, createMantainanceRequest);
 
 
 

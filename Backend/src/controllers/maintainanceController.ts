@@ -2,6 +2,7 @@ import Maintainance,{ IMaintainance } from '../models/maintainance';
 import { Request, Response, NextFunction } from 'express';
 import User, { IUser } from '../models/User';
 import { RequestWithUser } from '../authentication/auth';
+import Apartment, { IApartment } from '../models/apartment';
 
 // get all mentainance requests
 export const getAllMantainanceRequests = async (
@@ -59,8 +60,9 @@ export const createMantainanceRequest = async (
                 data: "user not found"
             })
         }
-         const { apartment, description, type } = req.body;
-        const maintainanceRequest: IMaintainance = await Maintainance.create({ user:req.user?._id, apartment, description, type });
+        const apartment = (await Apartment.findOne({occupants: user._id})) as IApartment;
+         const { description, type } = req.body;
+        const maintainanceRequest: IMaintainance = await Maintainance.create({ user:req.user?._id, apartment: apartment._id, description, type });
         res.status(200).json({ success: true, data: maintainanceRequest });
     } catch (error) {
         res.status(400).json({ success: false, data: (error as Error).message });

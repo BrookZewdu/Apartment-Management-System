@@ -31,7 +31,7 @@ const ApartmentRequestSchema = new Schema({
     enum: ['pending', 'accepted', 'rejected'],
     default: 'pending',
     },
-  createdAt: {
+  dateApplied: {
     type: Date,
     default: Date.now,
   },
