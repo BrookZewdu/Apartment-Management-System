@@ -125,7 +125,9 @@ export const rejectApartmentRequest = async (
   catch(error){
     res.status(400).json({ success: false, data: (error as Error).message });
   }
-}export const deleteLeaseAgreement = async (
+}
+
+export const deleteLeaseAgreement = async (
   req:Request,
   res:Response
 ) => {
